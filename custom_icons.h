@@ -1,0 +1,47 @@
+#define TERM_ICON_INDEX 0
+byte term[8] = {
+	0b00100,
+	0b01011,
+	0b01010,
+	0b01011,
+	0b01010,
+	0b10001,
+	0b10001,
+	0b01110
+};
+
+#define GOTA_ICON_INDEX 1
+byte gota[8] = {
+	0b00000,
+	0b00000,
+	0b00100,
+	0b01110,
+	0b11111,
+	0b11111,
+	0b11111,
+	0b01110
+};
+
+#define PORCENT_ICON_INDEX 2
+byte porcent[8] = {
+	0b00000,
+	0b00000,
+	0b00000,
+	0b11001,
+	0b11010,
+	0b00100,
+	0b01011,
+	0b10011
+};
+
+#define ORDINAL_ICON_INDEX 3
+byte ordinal[8] = {
+	0b00000,
+	0b00111,
+	0b00101,
+	0b00111,
+	0b00000,
+	0b00000,
+	0b00000,
+	0b00000
+};

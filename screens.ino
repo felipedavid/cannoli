@@ -19,10 +19,10 @@ void home_screen() {
     lcd.clear();
     lcd.setCursor(0, 0);
     // Exibe uma mensagem de saudação baseada no horário atual
-    if ((now.hour() >= 1) && (now.hour() <= 12)) {
+    if ((time.hour >= 1) && (time.hour <= 12)) {
       sprintf(screen_buffer, "    Bom dia!");
       lcd.print(screen_buffer);
-    } else if ((now.hour() > 12) && (now.hour() <= 18)) {
+    } else if ((time.hour > 12) && (time.hour <= 18)) {
       sprintf(screen_buffer, "   Boa tarde!");
       lcd.print(screen_buffer);
     } else {
@@ -100,8 +100,8 @@ void exib_data_screen() {
   if (!top_screen_printed) {
     lcd.clear();
     lcd.setCursor(0, 0);
-    sprintf(screen_buffer, "Data: %.2d/%.2d/%.2d", now.day(), now.month(),
-            now.year());
+    sprintf(screen_buffer, "Data: %.2d/%.2d/%.2d", time.day, time.month,
+            time.year);
     lcd.print(screen_buffer);
 
     lcd.setCursor(0, 1);
@@ -150,19 +150,19 @@ void exib_12h_screen() {
   unsigned long current_time = millis();
   if (current_time - start_time > 1000) {
     start_time = millis();
-    if ((now.hour() - 12) == (-12)) {
+    if ((time.hour - 12) == (-12)) {
     int hora = 12;
     lcd.clear();
     lcd.setCursor(0, 0);
-    sprintf(screen_buffer, "Hora:%.2d:%.2d:%.2d AM", hora, now.minute(),
-            now.second());
+    sprintf(screen_buffer, "Hora:%.2d:%.2d:%.2d AM", hora, time.minute,
+            time.second);
     lcd.print(screen_buffer);
-  } else if ((now.hour() - 12) == 0) {
+  } else if ((time.hour - 12) == 0) {
     int hora = 12;
     lcd.clear();
     lcd.setCursor(0, 0);
-    sprintf(screen_buffer, "Hora:%.2d:%.2d:%.2d PM", hora, now.minute(),
-            now.second());
+    sprintf(screen_buffer, "Hora:%.2d:%.2d:%.2d PM", hora, time.minute,
+            time.second);
     lcd.print(screen_buffer);
 
     lcd.setCursor(0, 1);
@@ -170,12 +170,12 @@ void exib_12h_screen() {
     lcd.print(screen_buffer);
     sprintf(screen_buffer, dia_da_semana[now.dayOfTheWeek()]);
     lcd.print(screen_buffer);
-  } else if ((now.hour() - 12) > 0) {
-    int hora = now.hour() - 12;
+  } else if ((time.hour - 12) > 0) {
+    int hora = time.hour - 12;
     lcd.clear();
     lcd.setCursor(0, 0);
-    sprintf(screen_buffer, "Hora:%.2d:%.2d:%.2d PM", hora, now.minute(),
-            now.second());
+    sprintf(screen_buffer, "Hora:%.2d:%.2d:%.2d PM", hora, time.minute,
+            time.second);
     lcd.print(screen_buffer);
 
     lcd.setCursor(0, 1);
@@ -186,8 +186,8 @@ void exib_12h_screen() {
   } else {
     lcd.clear();
     lcd.setCursor(0, 0);
-    sprintf(screen_buffer, "Hora:%.2d:%.2d:%.2d AM", now.hour(), now.minute(),
-            now.second());
+    sprintf(screen_buffer, "Hora:%.2d:%.2d:%.2d AM", time.hour, time.minute,
+            time.second);
     lcd.print(screen_buffer);
 
     lcd.setCursor(0, 1);
@@ -214,8 +214,8 @@ void exib_24h_acreen() {
   if (!top_screen_printed) {
     lcd.clear();
     lcd.setCursor(0, 0);
-    sprintf(screen_buffer, "Hora: %.2d:%.2d:%.2d", now.hour(), now.minute(),
-            now.second());
+    sprintf(screen_buffer, "Hora: %.2d:%.2d:%.2d", time.hour, time.minute,
+            time.second);
     lcd.print(screen_buffer);
 
     lcd.setCursor(0, 1);
@@ -310,16 +310,21 @@ void data_day_screen() {
   char ch = keypad.getKey();
   if (ch == 'D') {
     screen_stack_reset();
+	user_input_len = 0;
   } else if (ch == '#') {
     screen_stack_pop();
+	user_input_len = 0;
   } else if (ch == 'C') {
     user_input[user_input_len++] = '\0';
     time.day = atoi(user_input);
+	user_input_len = 0;
+	screen_stack_pop();
   } else if (is_number(ch)) {
     user_input[user_input_len++] = ch;
     lcd.print(ch);
   }
 }
+
 void data_month_screen() {
   if (!top_screen_printed) {
     lcd.clear();
@@ -332,8 +337,18 @@ void data_month_screen() {
   char ch = keypad.getKey();
   if (ch == 'D') {
     screen_stack_reset();
+	user_input_len = 0;
   } else if (ch == '#') {
     screen_stack_pop();
+	user_input_len = 0;
+  } else if (ch == 'C') {
+    user_input[user_input_len++] = '\0';
+    time.month = atoi(user_input);
+	user_input_len = 0;
+	screen_stack_pop();
+  } else if (is_number(ch)) {
+    user_input[user_input_len++] = ch;
+    lcd.print(ch);
   }
 }
 
@@ -349,19 +364,32 @@ void data_year_screen() {
   char ch = keypad.getKey();
   if (ch == 'D') {
     screen_stack_reset();
+	user_input_len = 0;
   } else if (ch == '#') {
     screen_stack_pop();
+	user_input_len = 0;
+  } else if (ch == 'C') {
+    user_input[user_input_len++] = '\0';
+    time.year = atoi(user_input);
+	user_input_len = 0;
+	screen_stack_pop();
+  } else if (is_number(ch)) {
+    user_input[user_input_len++] = ch;
+    lcd.print(ch);
   }
 }
 
 void clock_edit_screen() {
-  lcd.clear();
-  lcd.setCursor(0, 0);
-  sprintf(screen_buffer, "2-Hora  3-Min");
-  lcd.print(screen_buffer);
-  lcd.setCursor(0, 1);
-  sprintf(screen_buffer, "4-Sec  #-Voltar");
-  lcd.print(screen_buffer);
+  if (!top_screen_printed) {
+	lcd.clear();
+	lcd.setCursor(0, 0);
+	sprintf(screen_buffer, "2-Hora  3-Min");
+	lcd.print(screen_buffer);
+	lcd.setCursor(0, 1);
+	sprintf(screen_buffer, "4-Sec  #-Voltar");
+	lcd.print(screen_buffer);
+    top_screen_printed = true;
+  }
 
   char ch = keypad.getKey();
   if (ch == '2') {
@@ -378,43 +406,82 @@ void clock_edit_screen() {
 }
 
 void clock_hour_screen() {
-  lcd.clear();
-  lcd.setCursor(0, 0);
-  sprintf(screen_buffer, "Digite as Hora");
-  lcd.print(screen_buffer);
+  if (!top_screen_printed) {
+	  lcd.clear();
+	  lcd.setCursor(0, 0);
+	  sprintf(screen_buffer, "Digite as Hora");
+	  lcd.print(screen_buffer);
+    top_screen_printed = true;
+  }
 
   char ch = keypad.getKey();
   if (ch == 'D') {
     screen_stack_reset();
+	user_input_len = 0;
   } else if (ch == '#') {
     screen_stack_pop();
+	user_input_len = 0;
+  } else if (ch == 'C') {
+    user_input[user_input_len++] = '\0';
+    time.hour = atoi(user_input);
+	user_input_len = 0;
+	screen_stack_pop();
+  } else if (is_number(ch)) {
+    user_input[user_input_len++] = ch;
+    lcd.print(ch);
   }
 }
 
 void clock_min_screen() {
+  if (!top_screen_printed) {
   lcd.clear();
   lcd.setCursor(0, 0);
   sprintf(screen_buffer, "Digite os Min");
   lcd.print(screen_buffer);
+    top_screen_printed = true;
+  }
 
   char ch = keypad.getKey();
   if (ch == 'D') {
     screen_stack_reset();
+	user_input_len = 0;
   } else if (ch == '#') {
     screen_stack_pop();
+	user_input_len = 0;
+  } else if (ch == 'C') {
+    user_input[user_input_len++] = '\0';
+    time.minute = atoi(user_input);
+	user_input_len = 0;
+	screen_stack_pop();
+  } else if (is_number(ch)) {
+    user_input[user_input_len++] = ch;
+    lcd.print(ch);
   }
 }
 
 void clock_sec_screen() {
-  lcd.clear();
-  lcd.setCursor(0, 0);
-  sprintf(screen_buffer, "Digite os Seg");
-  lcd.print(screen_buffer);
+  if (!top_screen_printed) {
+	  lcd.clear();
+	  lcd.setCursor(0, 0);
+	  sprintf(screen_buffer, "Digite os Seg");
+	  lcd.print(screen_buffer);
+		top_screen_printed = true;
+  }
 
   char ch = keypad.getKey();
   if (ch == 'D') {
     screen_stack_reset();
+	user_input_len = 0;
   } else if (ch == '#') {
     screen_stack_pop();
+	user_input_len = 0;
+  } else if (ch == 'C') {
+    user_input[user_input_len++] = '\0';
+    time.second = atoi(user_input);
+	user_input_len = 0;
+	screen_stack_pop();
+  } else if (is_number(ch)) {
+    user_input[user_input_len++] = ch;
+    lcd.print(ch);
   }
 }
